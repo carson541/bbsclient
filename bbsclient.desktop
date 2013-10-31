@@ -1,0 +1,6 @@
+[Desktop Entry]
+Comment=A BBS Client
+Exec=bbsclient
+Icon=bbsclient
+Type=Application
+Name=BBS Client

@@ -1,0 +1,10 @@
+Files: bin/bbsclient apps/Applications/bbsclient.desktop pics/bbsclient.png help/html/bbsclient.html
+Priority: optional
+Section: qpe/applications
+Maintainer: Carson541 <carson541@hotmail.com>
+Architecture: arm
+Version: 1.0.0
+Depends: qpe-base ($QPE_VERSION)
+License: Public Domain
+Description: BBS Client
+ A bbs client terminal.
