@@ -5,3 +5,4 @@ bbsclient
 moc_*.cpp
 TAGS
 cscope.*
+*.a

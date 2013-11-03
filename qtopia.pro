@@ -4,6 +4,6 @@ HEADERS		= termwidget.h
 SOURCES		= main.cpp termwidget.cpp
 INCLUDEPATH	+= $(QPEDIR)/include
 DEPENDPATH	+= $(QPEDIR)/include
-LIBS            += -lqpe
+LIBS            += -lqpe -L. -lbbs
 INTERFACES	=
 TARGET		= bbsclient
