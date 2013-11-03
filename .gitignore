@@ -1,1 +1,8 @@
 .emacs.desktop*
+Makefile
+bbsclient
+*.o
+moc_*.cpp
+TAGS
+cscope.*
+*.a

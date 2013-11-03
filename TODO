@@ -1,0 +1,6 @@
+x) socket
+x) telnet
+ff fd 18
+ff fd 20
+ff fd 23
+ff fd 27
