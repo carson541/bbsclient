@@ -12,7 +12,9 @@ class TermWidget: public QWidget
 public:
     TermWidget();
     ~TermWidget();
-    void setCellFont(QFont &font);    
+    void setCellFont(QFont &font);
+    int IsReading(void);
+    void Test(void);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -22,6 +24,8 @@ private:
 	QFont cell_font;
     int cell_width;
     int cell_height;
+    int socket_fd;
+    int reading;
 };
 
 #endif /* _TERMWIDGET_H_ */

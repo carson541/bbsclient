@@ -2,11 +2,16 @@
 #include <qevent.h>
 #include <qfont.h>
 
+#include <stdio.h>
+
 #include "socket.h"
 #include "telnet.h"
 #include "terminal.h"
+#include "thread.h"
 
 #include "termwidget.h"
+
+void callback_func(void *);
 
 TermWidget::TermWidget()
 {
@@ -18,10 +23,21 @@ TermWidget::TermWidget()
 //    qDebug("calling test_socket");
     
 //    test_socket();
+
+    treset();
+
+    telnet_init();
+
+    socket_fd = socket_create();
+
+    // create a thread for read
+    reading = 1;
+    new_thread((void *)callback_func, (void *)this);
 }
 
 TermWidget::~TermWidget()
 {
+    socket_close();
 }
 
 void TermWidget::paintEvent(QPaintEvent *)
@@ -48,4 +64,50 @@ void TermWidget::setCellFont(QFont &font)
     // QString s2 = QString::fromUtf8("中文");
     // qDebug("cell_width_en = %d", fm.width(s1));
     // qDebug("cell_width_zh = %d", fm.width(s2));
+}
+
+int TermWidget::IsReading(void)
+{
+    return reading;
+}
+
+void TermWidget::Test(void)
+{
+    qDebug("test");
+}
+
+/*
+ * called by thread
+ */ 
+void callback_func(void *arg)
+{
+    TermWidget *p = (TermWidget*)arg;
+    int n, i;
+    char buf[16];
+    int echo;
+    
+    qDebug("<callback_func>");
+
+    p->Test();
+    
+    while(p->IsReading()) {
+        n = socket_read(buf, 16);
+
+        // dump
+        printf("read: %d\n", n);
+        for(i = 0; i < n; i++) {
+            if(i % 16 == 0 && i != 0) printf("\n");
+            printf("%.2x ", (unsigned char)buf[i]);
+        }
+        printf("\n");
+
+        for(i = 0; i < n; i++) {
+            echo = telnet_parse((unsigned char)buf[i]);
+            if(echo) tputc(buf[i]);
+        }
+
+        if(n <= 0) break;
+    }
+    
+    exit_threadfunc();
 }

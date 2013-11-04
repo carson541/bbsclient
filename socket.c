@@ -56,3 +56,60 @@ void test_socket(void)
 
     close(g_socket_fd);
 }
+
+int socket_create(void)
+{
+    struct hostent *p;
+    struct sockaddr_in addr;
+    
+    printf("<socket_create>\n");
+
+    p = gethostbyname(SERVER);
+    if(p == NULL) {
+        printf("error\n");
+        return -1;
+    }
+
+    if(p->h_addrtype == AF_INET) {
+        strcpy(g_server_addr,
+               inet_ntop(p->h_addrtype, *(p->h_addr_list),
+                         g_server_addr, sizeof(g_server_addr)));
+        printf("g_server_addr = %s\n", g_server_addr);
+    } else {
+        printf("error\n");
+        return -1;
+    }
+
+    g_socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+    bzero(&addr, sizeof(addr));
+    addr.sin_family = AF_INET;
+    inet_pton(AF_INET, g_server_addr, &addr.sin_addr);
+    addr.sin_port = htons(PORT);
+
+    connect(g_socket_fd, (struct sockaddr *)&addr, sizeof(addr));
+
+    return g_socket_fd;
+}
+
+void socket_close(void)
+{
+    close(g_socket_fd);
+}
+
+int socket_read(void *buf, int len)
+{
+    return read(g_socket_fd, buf, len);
+}
+
+void socket_writen(void *buf, int len)
+{
+    int n, total;
+
+    total = len;
+    while(total > 0) {
+        n = write(g_socket_fd, buf, total);
+        if(n < 0) break;
+        total -= n;
+    }
+}

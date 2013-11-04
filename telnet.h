@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+void telnet_init(void);
+int telnet_parse(unsigned char c);
+
 #ifdef __cplusplus
 }
 #endif

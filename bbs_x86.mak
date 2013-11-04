@@ -6,9 +6,9 @@ AFLAGS =
 
 PROG = libbbs.a
 
-HDRS = socket.h telnet.h terminal.h
-SRCS = socket.c telnet.c terminal.c
-OBJS = socket.o telnet.o terminal.o
+HDRS = socket.h telnet.h terminal.h thread.h
+SRCS = socket.c telnet.c terminal.c thread.c
+OBJS = socket.o telnet.o terminal.o thread.o
 
 $(PROG): $(OBJS)
 	 $(AR) rc $@ $(OBJS)

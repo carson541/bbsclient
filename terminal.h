@@ -7,6 +7,9 @@ extern "C" {
 
 #define COLS 80
 #define ROWS 24
+
+void treset(void);
+void tputc(char c);
     
 #ifdef __cplusplus
 }
