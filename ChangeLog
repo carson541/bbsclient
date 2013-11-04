@@ -1,1 +1,14 @@
+x) terminal
+x) telnet
+ff fd 18 - 24 terminal type
+ff fd 20 - 32 terminal speed
+ff fd 23 - 35 X Display Location
+ff fd 27 - 39 New - Environment variables
+ff fb 03 - 3  suppress go ahead
+ff fd 01 - 1  echo
+ff fd 1f - 31 window size
+ff fb 05 - 5  status
+ff fd 21 - 33 remote flow control
+ff fb 01 - 1  echo
+x) socket
 x) qtopia sample
