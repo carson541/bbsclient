@@ -4,6 +4,7 @@
 #include <qwidget.h>
 #include <qevent.h>
 #include <qfont.h>
+#include <qtimer.h>
 
 class TermWidget: public QWidget
 {
@@ -16,11 +17,15 @@ public:
     int IsReading(void);
     void Test(void);
 
+private slots:
+    void doRedraw();
+
 protected:
     void paintEvent(QPaintEvent *);
     void keyPressEvent(QKeyEvent *);
 
 private:
+    QTimer *redrawTimer;
 	QFont cell_font;
     int cell_width;
     int cell_height;

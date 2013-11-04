@@ -1,6 +1,9 @@
 #include <qwidget.h>
 #include <qevent.h>
 #include <qfont.h>
+#include <qtimer.h>
+#include <qcolor.h>
+#include <qpainter.h>
 
 #include <stdio.h>
 
@@ -12,6 +15,7 @@
 #include "termwidget.h"
 
 void callback_func(void *);
+void draw(QWidget *w);
 
 TermWidget::TermWidget()
 {
@@ -24,6 +28,11 @@ TermWidget::TermWidget()
     
 //    test_socket();
 
+    redrawTimer = new QTimer(this);
+    connect(redrawTimer, SIGNAL(timeout()),
+         this, SLOT(doRedraw()));
+    redrawTimer->start(1000);
+    
     treset();
 
     telnet_init();
@@ -42,6 +51,7 @@ TermWidget::~TermWidget()
 
 void TermWidget::paintEvent(QPaintEvent *)
 {
+    qDebug("paintEvent");
 }
 
 void TermWidget::keyPressEvent(QKeyEvent *k)
@@ -74,6 +84,13 @@ int TermWidget::IsReading(void)
 void TermWidget::Test(void)
 {
     qDebug("test");
+}
+
+void TermWidget::doRedraw()
+{
+    qDebug("doRedraw");
+
+    draw(this);
 }
 
 /*
@@ -110,4 +127,9 @@ void callback_func(void *arg)
     }
     
     exit_threadfunc();
+}
+
+void draw(QWidget *w)
+{
+    w->update();
 }
