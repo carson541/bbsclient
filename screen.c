@@ -56,5 +56,5 @@ void screen_redraw(void *context, void *drawable)
         }
     }
 
-//    xdrawcursor(painter);
+    xdrawcursor(context, drawable, cursor_x, cursor_y);
 }

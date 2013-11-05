@@ -72,7 +72,7 @@ TermWidget::~TermWidget()
 
 void TermWidget::paintEvent(QPaintEvent *)
 {
-    qDebug("paintEvent");
+//    qDebug("paintEvent");
 
     QPainter painter(this);
 
@@ -90,6 +90,19 @@ void TermWidget::paintEvent(QPaintEvent *)
 
 void TermWidget::keyPressEvent(QKeyEvent *k)
 {
+    switch(k->key()) {
+    case Qt::Key_Return:
+        break;
+    default:
+        break;
+    }
+
+    if(k->text().isEmpty()) {
+        return;
+    }
+
+    QByteArray data = k->text().local8Bit();
+    socket_writen(data.data(), data.count());
 }
 
 void TermWidget::setCellFont(QFont &font)
@@ -122,7 +135,7 @@ void TermWidget::Test(void)
 
 void TermWidget::doRedraw()
 {
-    qDebug("doRedraw");
+//    qDebug("doRedraw");
 
     draw(this);
 }
@@ -152,9 +165,9 @@ void callback_func(void *arg)
     char buf[16];
     int echo;
     
-    qDebug("<callback_func>");
+//    qDebug("<callback_func>");
 
-    p->Test();
+//    p->Test();
     
     while(p->IsReading()) {
         n = socket_read(buf, 16);
@@ -214,6 +227,8 @@ extern "C" void xdraws(void *context, void *drawable,
     int cell_width = w->getCellWidth();
     int cell_height = w->getCellHeight();
 
+    p->setFont(cell_font);
+    
     int temp;
 
     if(mode & ATTR_REVERSE) {
@@ -238,4 +253,21 @@ extern "C" void xdraws(void *context, void *drawable,
 
     str[charlen] = '\0';
     p->drawText(rect, Qt::SingleLine, str);
+}
+
+extern "C" void xdrawcursor(void *context, void *drawable,
+                            int cursor_x, int cursor_y)
+{
+    TermWidget *w = (TermWidget *)context;
+    QPainter *p = (QPainter *)drawable;
+
+    int cell_width = w->getCellWidth();
+    int cell_height = w->getCellHeight();
+
+    QRect rect(cursor_x * cell_width, cursor_y * cell_height,
+        cell_width, cell_height);
+
+    QRect r = rect;
+
+    p->drawRect(r);
 }

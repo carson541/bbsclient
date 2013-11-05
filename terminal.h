@@ -27,6 +27,7 @@ struct t_cell {
 extern struct t_cell cell[ROWS][COLS];
 
 extern int cursor_fg, cursor_bg;
+extern int cursor_x, cursor_y;
 
 void treset(void);
 void tputc(char c);

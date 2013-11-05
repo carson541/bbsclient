@@ -7,5 +7,7 @@ void xclear(void *context, void *drawable,
 void xdraws(void *context, void *drawable,
             int mode, int fg, int bg,
             char *str, int x, int y, int charlen, int bytelen);
+void xdrawcursor(void *context, void *drawable,
+                 int cursor_x, int cursor_y);
 
 #endif /* _UI_CALLBACK_H_ */
