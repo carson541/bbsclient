@@ -5,14 +5,6 @@
 #include "screen.h"
 #include "terminal.h"
 
-#define GLYPH_SET             1
-
-#define ATTR_NULL             0
-#define ATTR_REVERSE          1
-#define ATTR_UNDERLINE        2
-#define ATTR_BOLD             4
-#define ATTR_BLINK            8
-
 #define ESC_BUF_SIZ   256
 #define ESC_ARG_SIZ   16
 
@@ -21,14 +13,6 @@
 
 #define ESC_START             1
 #define ESC_CSI               2
-
-struct t_cell {
-    char c;
-    int mode;
-    int fg;
-    int bg;
-    int state;
-};
 
 struct t_cell cell[ROWS][COLS];
 int dirty[ROWS];

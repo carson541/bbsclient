@@ -16,6 +16,9 @@ public:
     void setCellFont(QFont &font);
     int IsReading(void);
     void Test(void);
+    int getCellWidth(void);
+    int getCellHeight(void);
+    QFont getCellFont(void);
 
 private slots:
     void doRedraw();
