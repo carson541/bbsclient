@@ -14,7 +14,8 @@ public:
     TermWidget();
     ~TermWidget();
     void setCellFont(QFont &font);
-    int IsReading(void);
+    int IsConnected(void);
+    void resetConnected(void);
     void Test(void);
     int getCellWidth(void);
     int getCellHeight(void);
@@ -33,7 +34,7 @@ private:
     int cell_width;
     int cell_height;
     int socket_fd;
-    int reading;
+    int connected;
 };
 
 #endif /* _TERMWIDGET_H_ */

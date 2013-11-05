@@ -40,6 +40,8 @@ void draw(QWidget *w);
 
 TermWidget::TermWidget()
 {
+    setCaption("BBS Client");
+
     QFont font("unifont", 16, 50, FALSE, QFont::Unicode);
     setCellFont(font);
 
@@ -58,11 +60,7 @@ TermWidget::TermWidget()
 
     telnet_init();
 
-    socket_fd = socket_create();
-
-    // create a thread for read
-    reading = 1;
-    new_thread((void *)callback_func, (void *)this);
+    connected = 0;
 }
 
 TermWidget::~TermWidget()
@@ -92,10 +90,18 @@ void TermWidget::keyPressEvent(QKeyEvent *k)
 {
     switch(k->key()) {
     case Qt::Key_Return:
+        if(!connected) {
+            socket_fd = socket_create();
+            connected = 1;
+            new_thread((void *)callback_func, (void *)this);
+            return;
+        }
         break;
     default:
         break;
     }
+
+    if(!connected) return;
 
     if(k->text().isEmpty()) {
         return;
@@ -123,9 +129,14 @@ void TermWidget::setCellFont(QFont &font)
     // qDebug("cell_width_zh = %d", fm.width(s2));
 }
 
-int TermWidget::IsReading(void)
+int TermWidget::IsConnected(void)
 {
-    return reading;
+    return connected;
+}
+
+void TermWidget::resetConnected(void)
+{
+    connected = 0;
 }
 
 void TermWidget::Test(void)
@@ -169,7 +180,7 @@ void callback_func(void *arg)
 
 //    p->Test();
     
-    while(p->IsReading()) {
+    while(p->IsConnected()) {
         n = socket_read(buf, 16);
 
         // dump
@@ -187,7 +198,11 @@ void callback_func(void *arg)
 
         if(n <= 0) break;
     }
+
+    p->resetConnected();
     
+    treset();
+
     exit_threadfunc();
 }
 

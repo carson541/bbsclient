@@ -8,7 +8,7 @@
 
 #include "socket.h"
 
-#define SERVER                "localhost"
+#define SERVER                "bbs.sjtu.edu.cn"
 #define PORT                  23
 
 static char g_server_addr[16];
