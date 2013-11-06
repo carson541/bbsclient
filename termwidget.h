@@ -5,6 +5,7 @@
 #include <qevent.h>
 #include <qfont.h>
 #include <qtimer.h>
+#include <qpixmap.h>
 
 class TermWidget: public QWidget
 {
@@ -35,6 +36,9 @@ private:
     int cell_height;
     int socket_fd;
     int connected;
+
+public:
+    QPixmap pix;
 };
 
 #endif /* _TERMWIDGET_H_ */

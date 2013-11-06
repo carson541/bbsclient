@@ -37,7 +37,7 @@ static const QColor palette_xterm[] = { /* AARRGGBB */
 };
 
 void callback_func(void *);
-void draw(QWidget *w);
+void draw(TermWidget *w);
 
 TermWidget::TermWidget()
 {
@@ -46,8 +46,14 @@ TermWidget::TermWidget()
     QFont font("unifont", 16, 50, FALSE, QFont::Unicode);
     setCellFont(font);
 
-    setGeometry(0, 20, cell_width * COLS, cell_height * ROWS);
+    setGeometry(0, 25, cell_width * COLS, cell_height * ROWS);
     
+    QRect r(0, 0, cell_width * COLS, cell_height * ROWS);
+    pix.resize(r.size());
+
+//    setBackgroundColor((QColor)0xff000000);
+    setBackgroundMode(NoBackground);
+        
 //    qDebug("calling test_socket");
     
 //    test_socket();
@@ -73,18 +79,9 @@ void TermWidget::paintEvent(QPaintEvent *)
 {
 //    qDebug("paintEvent");
 
-    QPainter painter(this);
-
     QRect r(0, 0, cell_width * COLS, cell_height * ROWS);
-    QPixmap pix(r.size());
-    pix.fill(this, r.topLeft());
 
-    QPainter p(&pix);
-//    p.drawText(10, 40, "test");
-    screen_redraw(this, &p);
-    p.end();
-
-    painter.drawPixmap(r.topLeft(), pix);
+    bitBlt(this, r.topLeft(), &pix);
 }
 
 void TermWidget::keyPressEvent(QKeyEvent *k)
@@ -207,8 +204,18 @@ void callback_func(void *arg)
     exit_threadfunc();
 }
 
-void draw(QWidget *w)
+void draw(TermWidget *w)
 {
+    int cell_width = w->getCellWidth();
+    int cell_height = w->getCellHeight();
+
+    QRect r(0, 0, cell_width * COLS, cell_height * ROWS);
+    w->pix.fill(w, r.topLeft());
+
+    QPainter p(&w->pix);
+    screen_redraw(w, &p);
+    p.end();
+
     w->update();
 }
 
