@@ -5,6 +5,7 @@
 #include <qcolor.h>
 #include <qpainter.h>
 #include <qpixmap.h>
+#include <qtextcodec.h>
 
 #include <stdio.h>
 
@@ -267,7 +268,23 @@ extern "C" void xdraws(void *context, void *drawable,
     p->setPen(color);
 
     str[charlen] = '\0';
-    p->drawText(rect, Qt::SingleLine, str);
+
+    QTextCodec *codec = QTextCodec::codecForName("GBK");
+    if(codec == NULL) {
+//        qDebug("GBK codec not found, fallback to ISO8859-1");
+        codec = QTextCodec::codecForName("ISO8859-1");
+    }
+
+    if(codec == NULL) {
+//        qDebug("codec not found");
+        p->drawText(rect, Qt::SingleLine, str);
+        return;
+    }
+    QString qstr;
+    QByteArray qbtr;
+    qbtr.duplicate(str, charlen);
+    qstr = codec->toUnicode(qbtr);
+    p->drawText(rect, Qt::SingleLine, qstr);
 }
 
 extern "C" void xdrawcursor(void *context, void *drawable,
