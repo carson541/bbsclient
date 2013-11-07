@@ -1,3 +1,5 @@
+x) iconv gbk to utf8
+x) gbk to utf8 without qtextcodec
 x) remove flickering
 x) chinese display
 x) input

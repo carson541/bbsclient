@@ -8,6 +8,7 @@
 #include <qtextcodec.h>
 
 #include <stdio.h>
+#include <iconv.h>
 
 #include "socket.h"
 #include "telnet.h"
@@ -181,6 +182,7 @@ void callback_func(void *arg)
     while(p->IsConnected()) {
         n = socket_read(buf, 16);
 
+#if 0
         // dump
         printf("read: %d\n", n);
         for(i = 0; i < n; i++) {
@@ -188,6 +190,7 @@ void callback_func(void *arg)
             printf("%.2x ", (unsigned char)buf[i]);
         }
         printf("\n");
+#endif
 
         for(i = 0; i < n; i++) {
             echo = telnet_parse((unsigned char)buf[i]);
@@ -277,21 +280,46 @@ extern "C" void xdraws(void *context, void *drawable,
     str[charlen] = '\0';
 
     QTextCodec *codec = QTextCodec::codecForName("GBK");
-    if(codec == NULL) {
-//        qDebug("GBK codec not found, fallback to ISO8859-1");
-        codec = QTextCodec::codecForName("ISO8859-1");
-    }
+    if(codec == NULL) { // try iconv
+        int iconv_fail = 0;
+        iconv_t cd = iconv_open("UTF-8", "GBK");
+        char outbuf[80 * 4];
+        int len, inlen, outlen;
+        char *in = str;
+        char *out = outbuf;
+        inlen = charlen; outlen = 80 * 4;
+        if(cd != NULL) {
+            len = iconv(cd, &in, (size_t *)&inlen,
+                        &out, (size_t *)&outlen);
+        } else {
+            iconv_fail = 1;
+        }
+        iconv_close(cd);
+        if(len != -1) {
+            QString qstr;
+            QByteArray qbtr;
+            qbtr.duplicate(outbuf, 80 *4 - outlen);
+            qstr = QString::fromUtf8(qbtr, 80 *4 - outlen);
+            p->drawText(rect, Qt::SingleLine, qstr);
+        } else {
+            iconv_fail = 1;
+        }
 
-    if(codec == NULL) {
+        if(iconv_fail) {
+//        qDebug("GBK codec not found, fallback to ISO8859-1");
+            codec = QTextCodec::codecForName("ISO8859-1");
+            if(codec == NULL) {
 //        qDebug("codec not found");
-        p->drawText(rect, Qt::SingleLine, str);
-        return;
+            }
+            p->drawText(rect, Qt::SingleLine, str);
+        }
+    } else { // use text codec
+        QString qstr;
+        QByteArray qbtr;
+        qbtr.duplicate(str, charlen);
+        qstr = codec->toUnicode(qbtr);
+        p->drawText(rect, Qt::SingleLine, qstr);
     }
-    QString qstr;
-    QByteArray qbtr;
-    qbtr.duplicate(str, charlen);
-    qstr = codec->toUnicode(qbtr);
-    p->drawText(rect, Qt::SingleLine, qstr);
 }
 
 extern "C" void xdrawcursor(void *context, void *drawable,

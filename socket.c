@@ -62,11 +62,11 @@ int socket_create(void)
     struct hostent *p;
     struct sockaddr_in addr;
     
-    printf("<socket_create>\n");
+//    printf("<socket_create>\n");
 
     p = gethostbyname(SERVER);
     if(p == NULL) {
-        printf("error\n");
+//        printf("error\n");
         return -1;
     }
 
@@ -74,9 +74,9 @@ int socket_create(void)
         strcpy(g_server_addr,
                inet_ntop(p->h_addrtype, *(p->h_addr_list),
                          g_server_addr, sizeof(g_server_addr)));
-        printf("g_server_addr = %s\n", g_server_addr);
+//        printf("g_server_addr = %s\n", g_server_addr);
     } else {
-        printf("error\n");
+//        printf("error\n");
         return -1;
     }
 
