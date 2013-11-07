@@ -1,3 +1,4 @@
+x) fix some input i.e query board
 x) iconv gbk to utf8
 x) gbk to utf8 without qtextcodec
 x) remove flickering
