@@ -102,66 +102,54 @@ void TermWidget::keyPressEvent(QKeyEvent *k)
         break;
     }
 
-#if 1
-    if(!(k->text().isEmpty())) {
-        int len = k->text().length();
-        qDebug("len = %d", len);
-        QByteArray data = k->text().local8Bit();
-        char *s = data.data();
-        int n = data.count();
-        printf("n(1): %d\n", n);
-        for(int i = 0; i < n; i++) {
-            printf("%.2x ", (unsigned char)s[i]);
-        }
-        printf("\n");
-        QTextCodec *codec = QTextCodec::codecForName("GBK");
-        if(codec == NULL) { // try iconv
-#ifdef USE_ICONV
-            iconv_t cd = iconv_open("GBK", "UTF-8"); // UTF8 -> GBK
-            char outbuf[16];
-            int len, inlen, outlen;
-            char *in = s;
-            char *out = outbuf;
-            inlen = n; outlen = 16;
-            if(cd != NULL) {
-                len = iconv(cd, &in, (size_t *)&inlen,
-                            &out, (size_t *)&outlen);
-            } else {
-            }
-            iconv_close(cd);
-            if(len != -1) {
-                printf("n(3): %d\n", 16 - outlen);
-                for(int i = 0; i < 16 - outlen; i++) {
-                    printf("%.2x ", (unsigned char)outbuf[i]);
-                }
-                printf("\n");
-            } else {
-            }
-#endif
-        } else { // use text codec
-            QByteArray qbstr = codec->fromUnicode(k->text());
-            char *s2 = qbstr.data();
-            int n2 = qbstr.count();
-            printf("n(4): %d\n", n2);
-            for(int i = 0; i < n2; i++) {
-                printf("%.2x ", (unsigned char)s2[i]);
-            }
-            printf("\n");
-        }
-    }
-#endif
-
     if(!connected) return;
 
     if(k->text().isEmpty()) {
         return;
     }
 
-    QByteArray data = k->text().local8Bit();
-    char *s = data.data();
-    int n = data.count();
-    if(n > 1 && (s[n-1] == '\0')) n--;
-    socket_writen(s, n);
+    QTextCodec *codec = QTextCodec::codecForName("GBK");
+    if(codec == NULL) { // try iconv
+#ifdef USE_ICONV
+        QByteArray data = k->text().local8Bit();
+        iconv_t cd = iconv_open("GBK", "UTF-8"); // UTF8 -> GBK
+        char outbuf[16];
+        int len = -1, inlen, outlen;
+        char *in = data.data();
+        char *out = outbuf;
+        inlen = data.count();
+        outlen = 16;
+        if(cd != NULL) {
+            len = iconv(cd, &in, (size_t *)&inlen,
+                        &out, (size_t *)&outlen);
+        } else {
+        }
+        iconv_close(cd);
+        if(len != -1) {
+            char *s = outbuf;
+            int n = 16 - outlen;
+            if(n > 1 && (s[n-1] == '\0')) n--;
+            printf("n(1): %d\n", n);
+            for(int i = 0; i < n; i++) {
+                printf("%.2x ", (unsigned char)s[i]);
+            }
+            printf("\n");
+            socket_writen(s, n);
+        } else {
+        }
+#endif
+    } else { // use text codec
+        QByteArray data = codec->fromUnicode(k->text());
+        char *s = data.data();
+        int n = data.count();
+        if(n > 1 && (s[n-1] == '\0')) n--;
+        printf("n(2): %d\n", n);
+        for(int i = 0; i < n; i++) {
+            printf("%.2x ", (unsigned char)s[i]);
+        }
+        printf("\n");
+        socket_writen(s, n);
+    }
 }
 
 void TermWidget::setCellFont(QFont &font)
