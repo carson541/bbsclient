@@ -89,6 +89,23 @@ void TermWidget::paintEvent(QPaintEvent *)
 
 void TermWidget::keyPressEvent(QKeyEvent *k)
 {
+#if 0
+    printf("k->key() = %d, 0x%x\n", k->key(), k->key());
+    if(k->text().isEmpty()) {
+        printf("text empty\n");
+    } else {
+        QByteArray data = k->text().local8Bit();
+        char *s = data.data();
+        int n = data.count();
+        printf("text: %d\n", n);
+        for(int i = 0; i < n; i++) {
+            printf("%.2x ", (unsigned char)s[i]);
+        }
+        printf("\n");
+    }
+    return;
+#endif
+
     switch(k->key()) {
     case Qt::Key_Return:
         if(!connected) {
@@ -129,11 +146,13 @@ void TermWidget::keyPressEvent(QKeyEvent *k)
             char *s = outbuf;
             int n = 16 - outlen;
             if(n > 1 && (s[n-1] == '\0')) n--;
+#if 0
             printf("n(1): %d\n", n);
             for(int i = 0; i < n; i++) {
                 printf("%.2x ", (unsigned char)s[i]);
             }
             printf("\n");
+#endif
             socket_writen(s, n);
         } else {
         }
@@ -143,11 +162,13 @@ void TermWidget::keyPressEvent(QKeyEvent *k)
         char *s = data.data();
         int n = data.count();
         if(n > 1 && (s[n-1] == '\0')) n--;
+#if 0
         printf("n(2): %d\n", n);
         for(int i = 0; i < n; i++) {
             printf("%.2x ", (unsigned char)s[i]);
         }
         printf("\n");
+#endif
         socket_writen(s, n);
     }
 }
