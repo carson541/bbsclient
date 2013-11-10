@@ -1,8 +1,11 @@
 .emacs.desktop*
 Makefile
-bbsclient
+./bbsclient
 *.o
 moc_*.cpp
 TAGS
 cscope.*
 *.a
+android/bin
+android/gen
+android/libs
