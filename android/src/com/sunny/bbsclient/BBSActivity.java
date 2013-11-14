@@ -1,38 +1,87 @@
 package com.sunny.bbsclient;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import android.os.Bundle;
 import android.app.Activity;
-// import android.graphics.Color;
-// import android.graphics.Paint;
-// import android.util.Log;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 public class BBSActivity extends Activity {
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_bbs);
+    BBSThread mThread;
+    Socket mSocket;
+    private String server = "bbs.sjtu.edu.cn";
+    private static final int PORT = 23;
+    DataInputStream in;
+    DataOutputStream out;
+    boolean bIsConnected;
 
-        // TermView tv = (TermView)this.findViewById(R.id.termView);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_bbs);
 
-        // Paint mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        // mTextPaint.setColor(Color.WHITE);
-        // mTextPaint.setTextSize(16);
-        // String s = "test";
-        // String s2 = "中文";
-        // String displayText = "Hello World!";
-        // float textWidth = mTextPaint.measureText(displayText);
-        // float w1 = mTextPaint.measureText(s);
-        // float w2 = mTextPaint.measureText(s2);
-        // Log.d("bbsclient", "textWidth = " + textWidth);
-        // Log.d("bbsclient", "w1 = " + w1);
-        // Log.d("bbsclient", "w2 = " + w2);
-	}
+        bIsConnected = false;
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.bb, menu);
-		return true;
-	}
+        TermView tv = (TermView)this.findViewById(R.id.termView);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bb, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case (R.id.action_connect):
+            Log.d("bbsclient", "connect");
+            if(!bIsConnected) {
+                bIsConnected = true;
+                mThread = new BBSThread();
+                mThread.start();
+            }
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    class BBSThread extends Thread {
+        public void run() {
+            try {
+                mSocket = new Socket(server, PORT);
+                in = new DataInputStream(mSocket.getInputStream());
+                out = new DataOutputStream(mSocket.getOutputStream());
+            } catch (UnknownHostException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            while(bIsConnected) {
+                byte buf[] = new byte[16];
+                int n = 0;
+                try {
+                    n = in.read(buf, 0, 16);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d("bbsclient", "read: " + n);
+
+                // try {
+                //     Thread.sleep(1000);
+                // } catch (InterruptedException e) {
+                //  e.printStackTrace();
+                // }
+            }
+
+        }
+    }
 }

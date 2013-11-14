@@ -1,1 +1,4 @@
+x) menu
 x) typeface
+x) com.sunny.bbsclient.TermView
+x) 720 x 1280 layout
