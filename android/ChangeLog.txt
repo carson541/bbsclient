@@ -1,3 +1,4 @@
+x) terminal
 x) menu
 x) typeface
 x) com.sunny.bbsclient.TermView

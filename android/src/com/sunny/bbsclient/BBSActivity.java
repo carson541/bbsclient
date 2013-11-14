@@ -20,15 +20,19 @@ public class BBSActivity extends Activity {
     DataInputStream in;
     DataOutputStream out;
     boolean bIsConnected;
+    Terminal mTerminal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bbs);
 
-        bIsConnected = false;
-
         TermView tv = (TermView)this.findViewById(R.id.termView);
+
+        mTerminal = new Terminal();
+        mTerminal.reset();
+
+        bIsConnected = false;
     }
 
     @Override
@@ -75,13 +79,22 @@ public class BBSActivity extends Activity {
                 }
                 Log.d("bbsclient", "read: " + n);
 
-                // try {
-                //     Thread.sleep(1000);
-                // } catch (InterruptedException e) {
-                //  e.printStackTrace();
-                // }
+                for(int i = 0; i < n; i++) {
+                    mTerminal.putc((char)buf[i]);
+                }
+
+                if(n == -1) break;
             }
 
+            try {
+                in.close();
+                out.close();
+                mSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            bIsConnected = false;
+            mTerminal.reset();
         }
     }
 }
