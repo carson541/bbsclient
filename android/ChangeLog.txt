@@ -1,5 +1,8 @@
+x) gbk <-> utf8
+x) color
 x) terminal
 x) menu
+x) socket
 x) typeface
 x) com.sunny.bbsclient.TermView
 x) 720 x 1280 layout

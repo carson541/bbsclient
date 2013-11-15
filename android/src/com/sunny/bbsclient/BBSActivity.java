@@ -32,6 +32,8 @@ public class BBSActivity extends Activity {
         mTerminal = new Terminal();
         mTerminal.reset();
 
+        tv.setTerminal(mTerminal);
+
         bIsConnected = false;
     }
 
