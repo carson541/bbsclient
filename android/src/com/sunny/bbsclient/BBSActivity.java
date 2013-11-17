@@ -64,17 +64,6 @@ public class BBSActivity extends Activity {
                 }
             }
         };
-
-        mTimer = new Timer();
-
-        mTimerTask = new TimerTask() {
-            @Override
-            public void run () {
-                // Log.d("bbsclient", "TimerTask");
-                Message msg = Message.obtain(mHandler, UPDATE_VIEW);
-                mHandler.sendMessage(msg);
-            }
-        };
     }
 
     @Override
@@ -94,6 +83,16 @@ public class BBSActivity extends Activity {
                 mThread = new BBSThread();
                 mThread.start();
             }
+            return true;
+        case (R.id.action_disconnect):
+            if(bIsConnected) {
+                try {
+                    mSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.d("bbsclient", "disconnect");
             return true;
         default:
             return false;
@@ -126,7 +125,7 @@ public class BBSActivity extends Activity {
                     mTerminal.putc((char)buf[i]);
                 }
 
-                if(n == -1) break;
+                if(n <= 0) break;
             }
 
             try {
@@ -139,10 +138,21 @@ public class BBSActivity extends Activity {
             bIsConnected = false;
             stopTimer();
             mTerminal.reset();
+            Message msg = Message.obtain(mHandler, UPDATE_VIEW);
+            mHandler.sendMessage(msg);
         }
     }
 
     private void startTimer() {
+        mTimer = new Timer();
+        mTimerTask = new TimerTask() {
+            @Override
+            public void run () {
+                // Log.d("bbsclient", "TimerTask");
+                Message msg = Message.obtain(mHandler, UPDATE_VIEW);
+                mHandler.sendMessage(msg);
+            }
+        };
         mTimer.schedule(mTimerTask, 1000, 1000); // delay, period
     }
 
