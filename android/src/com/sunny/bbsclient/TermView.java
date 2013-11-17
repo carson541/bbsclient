@@ -233,7 +233,7 @@ public class TermView extends View {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        Log.d("bbsclient", "s = " + s);
+        // Log.d("bbsclient", "s = " + s);
         canvas.drawText(s,
                         x * cell_width,
                         y * cell_height,

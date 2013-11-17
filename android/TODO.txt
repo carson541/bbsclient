@@ -1,3 +1,4 @@
-x) view redraw
+x) disconnect
+x) some draw issue
 x) onPause
 x) telnet
