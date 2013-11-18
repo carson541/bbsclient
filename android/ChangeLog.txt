@@ -1,3 +1,5 @@
+x) some draw issue
+x) disconnect
 x) redraw timer
 x) landscape
 x) gbk <-> utf8

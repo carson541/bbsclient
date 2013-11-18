@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
@@ -108,7 +109,7 @@ public class TermView extends View {
         mPaint.setTypeface(mFont);
         mPaint.setTextSize(16);
 
-        cell_width = 16;
+        cell_width = 8;
         cell_height = 16;
 
         palette_xterm = new int[16];
@@ -185,15 +186,21 @@ public class TermView extends View {
 
     private void xclear(Canvas canvas,
                         int x1, int y1, int x2, int y2) {
-        // Log.d("bbsclient", "xclear, y1 = " + y1);
-        Rect rect = new Rect(x1 * cell_width,
-                             y1 * cell_height,
-                             cell_width * x2 + 1,
-                             cell_height * y2 + 1);
+        // Log.d("bbsclient", "xclear, x1 = " + x1 + ", y1 = " + y1 +
+        //       ", x2 = " + x2 + ", y2 = " + y2);
+        // Log.d("bbsclient", "xclear, cell_width = " + cell_width +
+        //       ", cell_height = " + cell_height);
+        Rect rect = new Rect(x1 * cell_width, y1 * cell_height,
+             cell_width * (x2 - x1 + 1) + x1 * cell_width + 1,
+             cell_height * (y2 - y1 + 1) + y1 * cell_height + 1);
         // Log.d("bbsclient", "xclear, rect = " + rect);
+        // Log.d("bbsclient", "xclear, cursor_bg = " + mTerminal.cursor_bg);
+        // Log.d("bbsclient", "xclear, cursor_fg = " + mTerminal.cursor_fg);
         mPaint.setColor(palette_xterm[mTerminal.cursor_bg]);
+        // mPaint.setStyle(Style.FILL);
         canvas.drawRect(rect, mPaint);
         mPaint.setColor(palette_xterm[mTerminal.cursor_fg]);
+        // mPaint.setStyle(Style.STROKE);
     }
 
     private void xdraws(Canvas canvas,
@@ -211,12 +218,13 @@ public class TermView extends View {
             }
         }
 
-        Rect rect = new Rect(x * cell_width,
-                             y * cell_height,
-                             cell_width * (x + bytelen) + 1,
-                             cell_height * (y + 1) + 1);
+        Rect rect = new Rect(x * cell_width, y * cell_height,
+             cell_width * bytelen + x * cell_width + 1,
+             cell_height * 1 + y * cell_height + 1);
         mPaint.setColor(palette_xterm[bg]);
+        // mPaint.setStyle(Style.FILL);
         canvas.drawRect(rect, mPaint);
+        // mPaint.setStyle(Style.STROKE);
 
         int color = palette_xterm[fg];
         mPaint.setColor(color);

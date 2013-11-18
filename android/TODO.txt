@@ -1,4 +1,5 @@
-x) disconnect
-x) some draw issue
-x) onPause
+x) input text
 x) telnet
+x) fullscreen
+x) popup menu
+x) onPause
