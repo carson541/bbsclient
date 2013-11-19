@@ -1,4 +1,3 @@
-x) input text
 x) telnet
 x) fullscreen
 x) popup menu

@@ -1,3 +1,4 @@
+x) input test
 x) some draw issue
 x) disconnect
 x) redraw timer

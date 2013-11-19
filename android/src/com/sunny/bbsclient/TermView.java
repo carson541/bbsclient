@@ -3,6 +3,7 @@ package com.sunny.bbsclient;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,7 +13,13 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.BaseInputConnection;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 
 public class TermView extends View {
     private Paint mPaint;
@@ -21,19 +28,25 @@ public class TermView extends View {
     private int cell_height;
     Terminal mTerminal;
     int palette_xterm[];
+    InputMethodManager mInput;
+    Context mContext;
+    Activity mActivity;
 
     public TermView(Context context) {
         super(context);
+        mContext = context;
         init();
     }
 
     public TermView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         init();
     }
 
     public TermView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mContext = context;
         init();
     }
 
@@ -102,6 +115,10 @@ public class TermView extends View {
     }
 
     private void init() {
+        setFocusable(true);
+        mInput = (InputMethodManager)
+            mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFont = Typeface.createFromAsset(getResources().getAssets(),
                                          "UbuntuMono-R.ttf");
@@ -133,6 +150,10 @@ public class TermView extends View {
 
     public void setTerminal(Terminal t) {
         mTerminal = t;
+    }
+
+    public void setActivity(Activity a) {
+        mActivity = a;
     }
 
     private void screen_redraw(Canvas canvas) {
@@ -246,5 +267,62 @@ public class TermView extends View {
                         x * cell_width,
                         y * cell_height,
                         mPaint);
+    }
+
+    class TermInputConnection extends BaseInputConnection {
+        public String tx = "";
+
+        public TermInputConnection(View targetView, boolean fullEditor) {
+            super(targetView, fullEditor);
+        }
+
+        @Override
+        public boolean commitText(CharSequence text, int newCursorPosition) {
+            tx = text.toString();
+            // Log.d("bbsclient", "tx = " + tx);
+            return true;
+        }
+
+        @Override
+        public boolean performEditorAction(int actionCode) {
+            // Log.d("bbsclient",
+            //       "performEditorAction, actionCode = " + actionCode);
+            return true;
+        }
+
+        @Override
+        public boolean deleteSurroundingText(int beforeLength,
+                                             int afterLength) {
+            // Log.d("bbsclient", "deleteSurroundingText");
+            return true;
+        }
+    }
+
+    @Override
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        return new TermInputConnection(this, false);
+    }
+
+    private void toggleInput() {
+        mInput.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int actionPerformed = event.getAction();
+        // WindowManager.LayoutParams params =
+        //     mActivity.getWindow().getAttributes();
+        // boolean isOpen = mInput.isActive();
+        // Log.d("bbsclient", "onTouchEvent, event = " + event);
+        // Log.d("bbsclient", "isOpen = " + isOpen);
+        // Log.d("bbsclient", "softInputMode = " + params.softInputMode);
+
+        // if(actionPerformed == MotionEvent.ACTION_UP &&
+        //    params.softInputMode != WindowManager.LayoutParams.
+        //    SOFT_INPUT_STATE_VISIBLE) {
+        //     toggleInput();
+        // }
+
+        return true;
     }
 }

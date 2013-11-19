@@ -48,6 +48,7 @@ public class BBSActivity extends Activity {
         mTerminal.reset();
 
         mTermView.setTerminal(mTerminal);
+        mTermView.setActivity(this);
 
         bIsConnected = false;
 
@@ -75,7 +76,7 @@ public class BBSActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case (R.id.action_connect):
+        case R.id.action_connect:
             Log.d("bbsclient", "connect");
             if(!bIsConnected) {
                 bIsConnected = true;
@@ -84,7 +85,7 @@ public class BBSActivity extends Activity {
                 mThread.start();
             }
             return true;
-        case (R.id.action_disconnect):
+        case R.id.action_disconnect:
             if(bIsConnected) {
                 try {
                     mSocket.close();
@@ -93,6 +94,15 @@ public class BBSActivity extends Activity {
                 }
             }
             Log.d("bbsclient", "disconnect");
+            return true;
+        case R.id.toggle_input:
+            // (new Timer()).schedule(new TimerTask() {
+            //         @Override public void run() {
+            //             Log.d("bbsclient", "toggle input task");
+            //             mTermView.toggleInput();
+            //         }
+            //     }, 2000);
+            Log.d("bbsclient", "toggle input");
             return true;
         default:
             return false;
