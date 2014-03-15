@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,6 +27,7 @@ public class BBSActivity extends Activity {
     private DataOutputStream out;
     private boolean bIsConnected;
     private Terminal mTerminal;
+    private Telnet mTelnet;
     private TermView mTermView;
     private Timer mTimer = null;
     private TimerTask mTimerTask = null;
@@ -49,6 +51,9 @@ public class BBSActivity extends Activity {
 
         mTermView.setTerminal(mTerminal);
         mTermView.setActivity(this);
+
+        mTelnet = new Telnet();
+        mTelnet.init();
 
         bIsConnected = false;
 
@@ -115,6 +120,7 @@ public class BBSActivity extends Activity {
                 mSocket = new Socket(server, PORT);
                 in = new DataInputStream(mSocket.getInputStream());
                 out = new DataOutputStream(mSocket.getOutputStream());
+                mTelnet.setDataOutputStream(out);
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
             } catch (IOException e1) {
@@ -130,9 +136,12 @@ public class BBSActivity extends Activity {
                     e.printStackTrace();
                 }
                 // Log.d("bbsclient", "read: " + n);
+                // Log.d("bbsclient", Arrays.toString(buf));
 
                 for(int i = 0; i < n; i++) {
-                    mTerminal.putc((char)buf[i]);
+                    boolean echo = mTelnet.parse(buf[i]);
+                    // Log.d("bbsclient", "echo: " + echo);
+                    if(echo) mTerminal.putc((char)buf[i]);
                 }
 
                 if(n <= 0) break;

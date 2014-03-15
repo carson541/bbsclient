@@ -1,4 +1,3 @@
-x) telnet
 x) fullscreen
 x) popup menu
 x) onPause
