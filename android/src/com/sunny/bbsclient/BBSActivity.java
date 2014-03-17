@@ -17,6 +17,8 @@ import android.content.pm.ActivityInfo;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class BBSActivity extends Activity {
     private BBSThread mThread;
@@ -26,6 +28,7 @@ public class BBSActivity extends Activity {
     private DataInputStream in;
     private DataOutputStream out;
     private boolean bIsConnected;
+    private boolean bIsFullScreen;
     private Terminal mTerminal;
     private Telnet mTelnet;
     private TermView mTermView;
@@ -36,6 +39,8 @@ public class BBSActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bbs);
 
@@ -56,6 +61,7 @@ public class BBSActivity extends Activity {
         mTelnet.init();
 
         bIsConnected = false;
+        bIsFullScreen = false;
 
         mHandler = new Handler() {
             @Override
@@ -108,6 +114,10 @@ public class BBSActivity extends Activity {
             //         }
             //     }, 2000);
             Log.d("bbsclient", "toggle input");
+            return true;
+        case R.id.full_screen:
+            Log.d("bbsclient", "full screen");
+            toggleFullScreen();
             return true;
         default:
             return false;
@@ -178,5 +188,22 @@ public class BBSActivity extends Activity {
     private void stopTimer() {
         mTimer.cancel();
         mTimerTask.cancel();
+    }
+
+    private void toggleFullScreen() {
+        WindowManager.LayoutParams attrs = getWindow().getAttributes();
+
+        if(!bIsFullScreen) {
+            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            getWindow().setAttributes(attrs);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        } else {
+            attrs.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().setAttributes(attrs);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+
+        bIsFullScreen = !bIsFullScreen;
+        Log.d("bbsclient", "bIsFullScreen = " + bIsFullScreen);
     }
 }

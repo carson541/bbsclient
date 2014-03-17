@@ -6,5 +6,6 @@
     <string name="action_connect">Connect</string>
     <string name="action_disconnect">Disconnect</string>
     <string name="toggle_input">Toggle Input</string>
+    <string name="full_screen">Full Screen</string>
 
 </resources>
