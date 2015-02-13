@@ -9,3 +9,4 @@ cscope.*
 android/bin
 android/gen
 android/libs
+android/.settings
